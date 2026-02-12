@@ -28,3 +28,4 @@ pytube
 numexpr
 huggingface_hub
 ipywidgets
+streamlit
