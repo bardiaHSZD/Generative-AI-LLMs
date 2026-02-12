@@ -11,7 +11,7 @@ langchain-text-splitters
 langchain-openai
 chromadb
 sentence_transformers
-huggingface
+langchain_huggingface
 faiss-cpu
 langchain_chroma
 duckdb
@@ -19,6 +19,9 @@ pandas
 openai
 langchain-groq
 duckduckgo_search
+pymupdf
+arxiv
+wikipedia
 mysql-connector-python
 SQLAlchemy
 validators
@@ -29,3 +32,7 @@ numexpr
 huggingface_hub
 ipywidgets
 streamlit
+langchain_groq
+langchain_core
+langserve
+fastapi
