@@ -40,3 +40,4 @@ transformers
 langgraph
 langchain-core
 langchain_ollama
+langgraph-cli[inmem]
