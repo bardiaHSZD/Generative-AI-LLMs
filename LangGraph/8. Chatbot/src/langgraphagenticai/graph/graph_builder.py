@@ -2,6 +2,7 @@ from langgraph.graph import StateGraph
 from src.langgraphagenticai.state.state import State
 from langgraph.graph import START,END
 from src.langgraphagenticai.nodes.basic_chatbot_node import BasicChatbotNode
+from langchain_core.messages import HumanMessage, SystemMessage
 
 
 class GraphBuilder:
@@ -23,11 +24,45 @@ class GraphBuilder:
         self.graph_builder.add_edge(START,"chatbot")
         self.graph_builder.add_edge("chatbot",END)
 
+    def ai_news_build_graph(self):
+        """
+        Builds an AI News graph.
+        Uses the selected LLM with a news-focused system instruction.
+        """
+
+        def ai_news_node(state: State) -> dict:
+            user_query = state["messages"][-1].content
+            response = self.llm.invoke(
+                [
+                    SystemMessage(
+                        content=(
+                            "You are an AI news assistant. Answer with recent AI news-style output: "
+                            "a short summary, 3-5 bullet points of notable updates, and a brief why-it-matters section. "
+                            "If you are unsure about freshness, clearly say so."
+                        )
+                    ),
+                    HumanMessage(content=user_query),
+                ]
+            )
+            return {"messages": response}
+
+        self.graph_builder.add_node("ai_news", ai_news_node)
+        self.graph_builder.add_edge(START, "ai_news")
+        self.graph_builder.add_edge("ai_news", END)
+
     def setup_graph(self, usecase: str):
         """
         Sets up the graph for the selected use case.
         """
-        if usecase == "Basic Chatbot":
+        normalized_usecase = (usecase or "").strip().lower().replace("-", " ").replace("_", " ")
+
+        if normalized_usecase == "basic chatbot":
             self.basic_chatbot_build_graph()
+        elif normalized_usecase == "ai news":
+            self.ai_news_build_graph()
+        else:
+            raise ValueError(
+                f"Unsupported use case: '{usecase}'. Supported options are: Basic Chatbot, AI NEWS"
+            )
 
         return self.graph_builder.compile()

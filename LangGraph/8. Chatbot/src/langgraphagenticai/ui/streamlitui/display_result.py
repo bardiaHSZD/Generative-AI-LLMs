@@ -14,12 +14,14 @@ class DisplayResultStreamlit:
         graph = self.graph
         user_message = self.user_message
         print(user_message)
-        if usecase =="Basic Chatbot":
-                for event in graph.stream({'messages':("user",user_message)}):
-                    print(event.values())
-                    for value in event.values():
-                        print(value['messages'])
-                        with st.chat_message("user"):
-                            st.write(user_message)
-                        with st.chat_message("assistant"):
-                            st.write(value["messages"].content)
+        normalized_usecase = (usecase or "").strip().lower().replace("-", " ").replace("_", " ")
+
+        if normalized_usecase in ["basic chatbot", "ai news"]:
+            for event in graph.stream({'messages':("user",user_message)}):
+                print(event.values())
+                for value in event.values():
+                    print(value['messages'])
+                    with st.chat_message("user"):
+                        st.write(user_message)
+                    with st.chat_message("assistant"):
+                        st.write(value["messages"].content)
