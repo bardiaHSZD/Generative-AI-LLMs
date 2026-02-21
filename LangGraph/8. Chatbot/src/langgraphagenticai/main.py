@@ -1,6 +1,6 @@
 import streamlit as st
 from src.langgraphagenticai.ui.streamlitui.loadui import LoadStreamlitUI
-from src.langgraphagenticai.LLMS.groqllm import GroqLLM
+from langchain_community.chat_models import ChatOllama
 from src.langgraphagenticai.graph.graph_builder import GraphBuilder
 from src.langgraphagenticai.ui.streamlitui.display_result import DisplayResultStreamlit
 
@@ -26,8 +26,7 @@ def load_langgraph_agenticai_app():
     if user_message:
         try:
             ## Configure The LLM's
-            obj_llm_config=GroqLLM(user_contols_input=user_input)
-            model=obj_llm_config.get_llm_model()
+            model=ChatOllama(model="qwen2.5:7b")
 
             if not model:
                 st.error("Error: LLM model could not be initialized")

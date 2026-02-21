@@ -21,14 +21,10 @@ class LoadStreamlitUI:
             # LLM selection
             self.user_controls["selected_llm"] = st.selectbox("Select LLM", llm_options)
 
-            if self.user_controls["selected_llm"] == 'Groq':
+            if self.user_controls["selected_llm"] == 'Ollama':
                 # Model selection
-                model_options = self.config.get_groq_model_options()
-                self.user_controls["selected_groq_model"] = st.selectbox("Select Model", model_options)
-                self.user_controls["GROQ_API_KEY"] = st.session_state["GROQ_API_KEY"]=st.text_input("API Key",type="password")
-                # Validate API key
-                if not self.user_controls["GROQ_API_KEY"]:
-                    st.warning("⚠️ Please enter your GROQ API key to proceed. Don't have? refer : https://console.groq.com/keys ")
+                self.user_controls["selected_ollama_model"] = "qwen2.5:7b"
+                st.caption("Using Ollama model: qwen2.5:7b")
             
             ## USecase selection
             self.user_controls["selected_usecase"]=st.selectbox("Select Usecases",usecase_options)
