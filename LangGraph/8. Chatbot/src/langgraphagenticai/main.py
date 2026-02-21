@@ -44,11 +44,19 @@ def load_langgraph_agenticai_app():
 
             graph_builder=GraphBuilder(model)
             try:
+                 normalized_usecase = (usecase or "").strip().lower().replace("-", " ").replace("_", " ")
+                 if normalized_usecase == "chatbot with web":
+                     tavily_key = user_input.get("TAVILY_API_KEY", "")
+                     if not tavily_key:
+                         st.error("Error: TAVILY_API_KEY is required for 'Chatbot With Web'.")
+                         return
+
                  graph=graph_builder.setup_graph(usecase)
                  print(user_message)
                  DisplayResultStreamlit(usecase,graph,user_message).display_result_on_ui()
             except Exception as e:
-                 st.error(f"Error: Graph set up failed- {e}")
+                 error_msg = str(e).strip() or repr(e)
+                 st.error(f"Error: Graph execution failed - {error_msg}")
                  return
 
         except Exception as e:

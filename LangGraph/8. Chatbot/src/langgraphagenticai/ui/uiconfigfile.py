@@ -1,8 +1,11 @@
 from configparser import ConfigParser
+from pathlib import Path
 
 
 class Config:
-    def __init__(self,config_file="./src/langgraphagenticai/ui/uiconfigfile.ini"):
+    def __init__(self,config_file=None):
+        if config_file is None:
+            config_file = str(Path(__file__).with_name("uiconfigfile.ini"))
         self.config=ConfigParser()
         self.config.read(config_file)
 

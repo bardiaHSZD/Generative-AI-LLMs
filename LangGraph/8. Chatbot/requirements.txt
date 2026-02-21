@@ -8,3 +8,4 @@ langchain_openai
 faiss-cpu
 streamlit
 tavily-python
+langchain_tavily
