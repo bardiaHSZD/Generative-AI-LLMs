@@ -26,7 +26,8 @@ def load_langgraph_agenticai_app():
     if user_message:
         try:
             ## Configure The LLM's
-            model=ChatOllama(model="qwen2.5:7b")
+            selected_ollama_model = user_input.get("selected_ollama_model", "qwen2.5:7b")
+            model=ChatOllama(model=selected_ollama_model)
 
             if not model:
                 st.error("Error: LLM model could not be initialized")

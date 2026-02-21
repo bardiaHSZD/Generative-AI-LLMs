@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 
 from src.langgraphagenticai.ui.uiconfigfile import Config
 
@@ -23,8 +22,8 @@ class LoadStreamlitUI:
 
             if self.user_controls["selected_llm"] == 'Ollama':
                 # Model selection
-                self.user_controls["selected_ollama_model"] = "qwen2.5:7b"
-                st.caption("Using Ollama model: qwen2.5:7b")
+                model_options = self.config.get_ollama_model_options()
+                self.user_controls["selected_ollama_model"] = st.selectbox("Select Model", model_options)
             
             ## USecase selection
             self.user_controls["selected_usecase"]=st.selectbox("Select Usecases",usecase_options)
