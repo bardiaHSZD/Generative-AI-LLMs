@@ -56,5 +56,3 @@ class ChatbotWithToolNode:
             }
 
         return chatbot_node
-
-

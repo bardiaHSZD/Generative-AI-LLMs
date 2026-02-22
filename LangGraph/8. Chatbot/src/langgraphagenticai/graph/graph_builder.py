@@ -7,6 +7,8 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from src.langgraphagenticai.tools.search_tool import get_tools,create_tool_node
 from langgraph.prebuilt import tools_condition,ToolNode
 from src.langgraphagenticai.nodes.chatbot_with_Tool_node import ChatbotWithToolNode
+from src.langgraphagenticai.nodes.ai_news_node import AINewsNode
+
 
 class GraphBuilder:
     def __init__(self,model):
@@ -27,31 +29,7 @@ class GraphBuilder:
         self.graph_builder.add_edge(START,"chatbot")
         self.graph_builder.add_edge("chatbot",END)
 
-    def ai_news_build_graph(self):
-        """
-        Builds an AI News graph.
-        Uses the selected LLM with a news-focused system instruction.
-        """
 
-        def ai_news_node(state: State) -> dict:
-            user_query = state["messages"][-1].content
-            response = self.llm.invoke(
-                [
-                    SystemMessage(
-                        content=(
-                            "You are an AI news assistant. Answer with recent AI news-style output: "
-                            "a short summary, 3-5 bullet points of notable updates, and a brief why-it-matters section. "
-                            "If you are unsure about freshness, clearly say so."
-                        )
-                    ),
-                    HumanMessage(content=user_query),
-                ]
-            )
-            return {"messages": response}
-
-        self.graph_builder.add_node("ai_news", ai_news_node)
-        self.graph_builder.add_edge(START, "ai_news")
-        self.graph_builder.add_edge("ai_news", END)
     def chatbot_with_tools_build_graph(self):
         """
         Builds an advanced chatbot graph with tool integration.
@@ -78,6 +56,26 @@ class GraphBuilder:
         self.graph_builder.add_edge(START,"chatbot")
         self.graph_builder.add_conditional_edges("chatbot",tools_condition)
         self.graph_builder.add_edge("tools","chatbot")
+
+
+    def ai_news_builder_graph(self):
+
+        ai_news_node=AINewsNode(self.llm)
+
+        ## added the nodes
+
+        self.graph_builder.add_node("fetch_news",ai_news_node.fetch_news)
+        self.graph_builder.add_node("summarize_news",ai_news_node.summarize_news)
+        self.graph_builder.add_node("save_result",ai_news_node.save_result)
+
+        #added the edges
+
+        self.graph_builder.set_entry_point("fetch_news")
+        self.graph_builder.add_edge("fetch_news","summarize_news")
+        self.graph_builder.add_edge("summarize_news","save_result")
+        self.graph_builder.add_edge("save_result", END)
+
+
     def setup_graph(self, usecase: str):
         """
         Sets up the graph for the selected use case.
@@ -87,7 +85,7 @@ class GraphBuilder:
         if normalized_usecase == "basic chatbot":
             self.basic_chatbot_build_graph()
         elif normalized_usecase == "ai news":
-            self.ai_news_build_graph()
+            self.ai_news_builder_graph()
         elif normalized_usecase == "chatbot with web":
             self.chatbot_with_tools_build_graph()    
         else:
