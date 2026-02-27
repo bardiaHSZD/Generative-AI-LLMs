@@ -1,0 +1,11 @@
+torch
+torchvision
+transformers>=4.41.0
+datasets
+peft
+accelerate
+pillow
+opencv-python
+matplotlib
+numpy
+python-dotenv
